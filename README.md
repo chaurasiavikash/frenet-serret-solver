@@ -44,3 +44,18 @@ bz0 = tx0 * ny0 - ty0 * nx0;
 
 % Initial condition vector
 in_rk = [rx0 ry0 rz0 tx0 ty0 tz0 nx0 ny0 nz0 bx0 by0 bz0];
+
+ 
+### 2. Discretization and Curvature/Torsion
+
+% Number of nodal points for discretization
+N = 400;
+s = linspace(0, 1, N + 1); % Discrete arc length
+
+% Define curvature and torsion
+kappa = 13.14 * sin(3 * pi * s); % Example curvature
+tau = 8.094 * ones(1, length(kappa)); % Example torsion
+
+% Ensure curvature and torsion are column vectors
+kappa = kappa(:);
+tau = tau(:);
