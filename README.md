@@ -44,10 +44,10 @@ bz0 = tx0 * ny0 - ty0 * nx0;
 
 % Initial condition vector
 in_rk = [rx0 ry0 rz0 tx0 ty0 tz0 nx0 ny0 nz0 bx0 by0 bz0];
-
+```
  
 ### 2. Discretization and Curvature/Torsion
-
+```
 % Number of nodal points for discretization
 N = 400;
 s = linspace(0, 1, N + 1); % Discrete arc length
@@ -59,3 +59,46 @@ tau = 8.094 * ones(1, length(kappa)); % Example torsion
 % Ensure curvature and torsion are column vectors
 kappa = kappa(:);
 tau = tau(:);
+```
+
+
+###  3. Solve the Equations
+Run main_solver.m to solve the Frenet-Serret equations using ode45. The results will be saved in the current directory as text files (position.txt, tangent.txt, normal.txt, binormal.txt).
+
+```
+% Set ODE solver options
+opts = odeset('RelTol', 1e-16, 'AbsTol', 1e-16);
+
+% Solve ODE
+[t, y] = ode45(@fun_rk4, s, in_rk, opts);
+
+% Extract position, tangent, normal, and binormal vectors
+rx = y(:, 1);
+ry = y(:, 2);
+rz = y(:, 3);
+tx = y(:, 4);
+ty = y(:, 5);
+tz = y(:, 6);
+nx = y(:, 7);
+ny = y(:, 8);
+nz = y(:, 9);
+bx = y(:, 10);
+by = y(:, 11);
+bz = y(:, 12);
+
+% Save data to text files
+save_to_file('./position.txt', [rx, ry, rz]);
+save_to_file('./tangent.txt', [tx, ty, tz]);
+save_to_file('./normal.txt', [nx, ny, nz]);
+save_to_file('./binormal.txt', [bx, by, bz]);
+
+% Function to save data to a text file
+function save_to_file(filename, data)
+    fileID = fopen(filename, 'w');
+    fprintf(fileID, '%30.16E %30.16E %30.16E \r\n', data');
+    fclose(fileID);
+end 
+```
+
+### 4. Visualize the Results
+Run animation.m to visualize the 3D curve and the Frenet frame vectors. The animation will show the evolution of the curve along with the tangent, normal, and binormal vectors.
